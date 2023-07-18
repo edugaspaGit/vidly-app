@@ -1,9 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import Form from "./commons/form";
 import Joi from "joi-browser";
 
 class LoginForm extends Form {
-  //   username = React.createRef();
   state = {
     data: {
       username: "",
@@ -16,10 +15,6 @@ class LoginForm extends Form {
     username: Joi.string().required().label("Username"),
     password: Joi.string().required().label("Password"),
   };
-
-  //   componentDidMount() {
-  //     this.username.current.focus();
-  //   }
 
   handleChange = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
@@ -37,19 +32,6 @@ class LoginForm extends Form {
     // const username = this.username.current.value;
     console.log("Submitted");
   };
-
-  // console.log(result);
-
-  // const errors = {};
-  // const { account } = this.state;
-  // if (account.username.trim() === "") {
-  //   errors.username = "Username is required";
-  // }
-  // if (account.password.trim() === "") {
-  //   errors.password = "Password is required";
-  // }
-  // return errors;
-  // return { username: "Username is required" };
 
   render() {
     // const { data, errors } = this.state;
