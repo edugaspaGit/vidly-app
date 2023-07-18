@@ -7,7 +7,6 @@ import { getGenres } from "../services/fakeGenreService";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 
-
 class Movies extends Component {
   state = {
     movies: [],
@@ -89,35 +88,35 @@ class Movies extends Component {
     if (totalCount === 0) return <p>No movies to show from the database</p>;
     //return <p className="badge m-2">No movies to show from the database</p>;
     return (
-
-        <div className="row">
-          <div className="col-3">
-            <ListGroup
-              groups={genres}
-              valueProperty="_id"
-              textProperty="name"
-              selectedGroup={selectedGenre}
-              onGroupSelect={this.handleGenreSelect}
-            />
-          </div>
-          <div className="col">
-            <p>Showing {totalCount} movies from the DB:</p>
-            <MoviesTable
-              movies={movies}
-              sortColumn={sortColumn}
-              onLike={this.handleLike}
-              onDelete={this.handleDelete}
-              onSort={this.handleSort}
-            />
-            <Pagination
-              //  itemsCount="abc"
-              itemsCount={totalCount}
-              pageSize={pageSize}
-              currentPage={currentPage}
-              onPageChange={this.handlePageChange}
-            />
-          </div>
-        </div>              
+      <div className="row">
+        <div className="col-3">
+          <ListGroup
+            groups={genres}
+            valueProperty="_id"
+            textProperty="name"
+            selectedGroup={selectedGenre}
+            onGroupSelect={this.handleGenreSelect}
+          />
+        </div>
+        <div className="col">
+          <button className="btn btn-primary">New Movie</button>
+          <p>Showing {totalCount} movies from the DB:</p>
+          <MoviesTable
+            movies={movies}
+            sortColumn={sortColumn}
+            onLike={this.handleLike}
+            onDelete={this.handleDelete}
+            onSort={this.handleSort}
+          />
+          <Pagination
+            //  itemsCount="abc"
+            itemsCount={totalCount}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={this.handlePageChange}
+          />
+        </div>
+      </div>
     );
   }
 }

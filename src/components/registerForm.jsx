@@ -18,16 +18,16 @@ class RegisterForm extends Form {
     name: Joi.string().required().label("Name"),
   };
 
-  handleChange = ({ currentTarget: input }) => {
-    const errors = { ...this.state.errors };
-    const errorMessage = this.validateProperty(input);
-    if (errorMessage) errors[input.name] = errorMessage;
-    else delete errors[input.name];
+  // handleChange = ({ currentTarget: input }) => {
+  //   const errors = { ...this.state.errors };
+  //   const errorMessage = this.validateProperty(input);
+  //   if (errorMessage) errors[input.name] = errorMessage;
+  //   else delete errors[input.name];
 
-    const data = { ...this.state.data };
-    data[input.name] = input.value;
-    this.setState({ data, errors });
-  };
+  //   const data = { ...this.state.data };
+  //   data[input.name] = input.value;
+  //   this.setState({ data, errors });
+  // };
 
   doSubmit = () => {
     // Call the server

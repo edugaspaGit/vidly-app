@@ -20,6 +20,7 @@ class Form extends Component {
     }
     return errors;
   };
+
   validateProperty = ({ name, value }) => {
     const obj = { [name]: value };
     const schema = { [name]: this.schema[name] };
@@ -32,6 +33,16 @@ class Form extends Component {
     //   if (value.trim() === "") return "Password is required";
     // }
   };
+  handleChange = ({ currentTarget: input }) => {
+    const errors = { ...this.state.errors };
+    const errorMessage = this.validateProperty(input);
+    if (errorMessage) errors[input.name] = errorMessage;
+    else delete errors[input.name];
+
+    const data = { ...this.state.data };
+    data[input.name] = input.value;
+    this.setState({ data, errors });
+  };
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -40,6 +51,7 @@ class Form extends Component {
     if (errors) return;
     this.doSubmit();
   };
+
   renderButton = (label) => {
     return (
       <button
@@ -51,7 +63,8 @@ class Form extends Component {
       </button>
     );
   };
-  renderInput = (name, label, type = "text") => {
+
+  renderInput = (name, label, type = "text", value) => {
     const { data, errors } = this.state;
     return (
       <Input
