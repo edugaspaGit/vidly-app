@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Form from "./commons/form";
-import { getMovies } from "../services/fakeMovieService";
+import { getMovie, getMovies, saveMovie } from "../services/fakeMovieService";
 import { getGenres } from "../services/fakeGenreService";
 import Joi from "joi-browser";
 
@@ -8,50 +8,70 @@ class MovieForm extends Form {
   state = {
     data: {
       title: "",
-      genre: "",
+      genreId: "",
       numberInStock: "",
-      rate: "",
+      dailyRentalRate: "",
     },
-    movies: getMovies(),
-    genres: getGenres(),
+    genres: [],
     errors: {},
   };
 
   schema = {
+    _id: Joi.string(),
     title: Joi.string().required().label("Title"),
-    genre: Joi.string().required().label("Genre"),
-    numberInStock: Joi.number().integer().positive().label("Number in Stock"),
-    rate: Joi.number().min(0).max(10).label("Rate"),
+    genreId: Joi.string().required().label("Genre"),
+    numberInStock: Joi.number()
+      .integer()
+      .positive()
+      .max(100)
+      .label("Number in Stock"),
+    dailyRentalRate: Joi.number().min(0).max(10).label("Rate"),
   };
 
   componentDidMount() {
-    // const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-    // const movies = getMovies();
-    // this.setState({ movies: getMovies(), genres });
+    const genres = getGenres();
+    this.setState({ genres });
+
+    const movieId = this.props.match.params.id;
+    if (movieId === "new") return;
+
+    const movie = getMovie(movieId);
+    if (!movie) return this.props.history.replace("/not-found");
+
+    this.setState({ data: this.mapToViewModel(movie) });
   }
 
-  handleSave = () => {
+  mapToViewModel(movie) {
+    return {
+      _id: movie._id,
+      title: movie.title,
+      genreId: movie.genre._id,
+      numberInStock: movie.numberInStock,
+      dailyRentalRate: movie.dailyRentalRate,
+    };
+  }
+
+  doSubmit = () => {
     // Navigate to /products
+    saveMovie(this.state.data);
+
     this.props.history.replace("/movies");
   };
 
   render() {
-    const id = this.props.match.params.id;
-    const moviesAux = this.state.movies.filter((m) => m._id === id);
-    const movie = moviesAux[0];    
     return (
       <div>
         <h1>Movie Form</h1>
-        <form onSubmit={this.handleSave}>
+        <form onSubmit={this.doSubmit}>
           {this.renderInput("title", "Title")}
-          {this.renderInput("genre", "Genre")}
+          {this.renderSelect("genreId", "Genre", this.state.genres)}
           {this.renderInput("numberInStock", "Number In Stock", "number")}
-          {this.renderInput("rate", "Rate", "number")}
-
+          {this.renderInput("dailyRentalRate", "Rate")}
+          {this.renderButton("Save")}
         </form>
         {/* <h1>Movie Details - {movie.title} </h1> */}
         {/* <h1>Movie Details - {this.props.match.params.id} </h1> */}
-        {this.renderButton("Save")}
+
         {/* <button onClick={this.handleSave} className="btn btn-primary">
           Save
         </button> */}
