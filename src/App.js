@@ -8,12 +8,15 @@ import LoginForm from "./components/loginForm";
 import RegisterForm from "./components/registerForm";
 import NotFound from "./components/notFound";
 import { Route, Switch, Redirect } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import "./App.css";
 
 class App extends Component {
   render() {
     return (
       <React.Fragment>
+        <ToastContainer />
         <Navbar />
         <main className="container">
           <Switch>

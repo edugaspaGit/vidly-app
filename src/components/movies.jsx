@@ -1,13 +1,16 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+// import { getMovies, deleteMovie } from "../services/fakeMovieService";
+import { getMovies, deleteMovie } from "../services/movieService";
 import Pagination from "./commons/pagination";
 import { paginate } from "./utils/paginate";
 import ListGroup from "./commons/listgroup";
-import { getGenres } from "../services/fakeGenreService";
+import { getGenres } from "../services/genreService";
+// import { getGenres } from "../services/fakeGenreService";
 import MoviesTable from "./moviesTable";
 import _ from "lodash";
 import { NavLink } from "react-router-dom";
 import SearchBox from "./commons/searchBox";
+import { toast } from "react-toastify";
 
 class Movies extends Component {
   state = {
@@ -19,18 +22,32 @@ class Movies extends Component {
     selectedGenre: null,
     sortColumn: { path: "title", order: "asc" },
   };
-  componentDidMount() {
-    const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
-    this.setState({ movies: getMovies(), genres });
+
+  async componentDidMount() {
+    const { data } = await getGenres();
+    const genres = [{ _id: "", name: "All Genres" }, ...data];
+    // const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
+    // const { movies } = getMovies();
+    const { data: movies } = await getMovies();
+    this.setState({ movies, genres });
   }
 
   handleSearch = (query) => {
     this.setState({ searchQuery: query, selectedGenre: null, currentPage: 1 });
   };
 
-  handleDelete = (movie) => {
+  handleDelete = async (movie) => {
+    const originalMovies = this.state.movies;
     const movies = this.state.movies.filter((m) => m._id != movie._id);
     this.setState({ movies });
+
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("The movie has already been deleted!");
+      this.setState({ movies: originalMovies });
+    }
   };
 
   handleLike = (movie) => {
@@ -79,7 +96,7 @@ class Movies extends Component {
       );
     else if (selectedGenre && selectedGenre._id)
       filtered = allMovies.filter(
-        (movie) => movie.genre._id === selectedGenre._id
+        (movie) => movie.genre.name === selectedGenre.name
       );
 
     // const moviesGenre =
@@ -111,7 +128,7 @@ class Movies extends Component {
 
     const { totalCount, movies } = this.getPagedData();
 
-    if (totalCount === 0) return <p>No movies to show from the database</p>;
+    // if (totalCount === 0) return <p>No movies to show from the database</p>;// Commented because the page triggers an incorrect screen after
     //return <p className="badge m-2">No movies to show from the database</p>;
     return (
       <div className="row">

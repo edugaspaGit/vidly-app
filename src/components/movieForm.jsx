@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import Form from "./commons/form";
-import { getMovie, getMovies, saveMovie } from "../services/fakeMovieService";
-import { getGenres } from "../services/fakeGenreService";
+import { getMovie, saveMovie } from "../services/movieService";
+// import { getMovie, saveMovie } from "../services/fakeMovieService";
+import { getGenres } from "../services/genreService";
+// import { getGenres } from "../services/fakeGenreService";
 import Joi from "joi-browser";
 
 class MovieForm extends Form {
@@ -28,17 +30,29 @@ class MovieForm extends Form {
     dailyRentalRate: Joi.number().min(0).max(10).label("Rate"),
   };
 
-  componentDidMount() {
-    const genres = getGenres();
+  async populateGenres() {
+    const { data: genres } = await getGenres();
+    // const genres = await getGenres();
     this.setState({ genres });
+  }
 
-    const movieId = this.props.match.params.id;
-    if (movieId === "new") return;
+  async populateMovies() {
+    try {
+      const movieId = this.props.match.params.id;
+      if (movieId === "new") return;
 
-    const movie = getMovie(movieId);
-    if (!movie) return this.props.history.replace("/not-found");
+      const { data: movie } = await getMovie(movieId);
+      this.setState({ data: this.mapToViewModel(movie) });
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        return this.props.history.replace("/not-found");
+    }
+  }
 
-    this.setState({ data: this.mapToViewModel(movie) });
+  async componentDidMount() {
+    // console.log("shit happens");
+    await this.populateGenres();
+    await this.populateMovies();
   }
 
   mapToViewModel(movie) {
@@ -51,11 +65,14 @@ class MovieForm extends Form {
     };
   }
 
-  doSubmit = () => {
-    // Navigate to /products
-    saveMovie(this.state.data);
-
-    this.props.history.replace("/movies");
+  doSubmit = async () => {
+    await saveMovie(this.state.data);
+    this.props.history.push("/movies");
+    // await saveMovie(this.state.data);
+    // console.log("be happy");
+    // Must do a research to determine why push method is not working as expected
+    // this.props.history.push("/movies");
+    // this.props.history.replace("/movies");
   };
 
   render() {
