@@ -66,8 +66,8 @@ class MovieForm extends Form {
   }
 
   doSubmit = async () => {
-    await saveMovie(this.state.data);
-    this.props.history.push("/movies");
+    saveMovie(this.state.data);
+    return this.props.history.push("/movies");
     // await saveMovie(this.state.data);
     // console.log("be happy");
     // Must do a research to determine why push method is not working as expected

@@ -1,5 +1,6 @@
 import React from "react";
 import Form from "./commons/form";
+import { register } from "../services/userService";
 import Joi from "joi-browser";
 
 class RegisterForm extends Form {
@@ -29,10 +30,20 @@ class RegisterForm extends Form {
   //   this.setState({ data, errors });
   // };
 
-  doSubmit = () => {
+  doSubmit = async () => {
     // Call the server
+    try {
+      const response = await register(this.state.data);
+      localStorage.setItem("token", response.headers["x-auth-token"]);
+      return this.props.history.push("/movies");
+    } catch (ex) {
+      const errors = { ...this.state.errors };
+      errors.username = ex.response.data;
+      this.setState({ errors });
+    }
+
     // const username = this.username.current.value;
-    console.log("Registered");
+    // console.log("Registered");
   };
 
   render() {
