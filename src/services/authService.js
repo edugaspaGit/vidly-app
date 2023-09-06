@@ -1,34 +1,45 @@
 import http from './httpService';
 import config from "../config.json";
+import jwtDecode from 'jwt-decode';
 
 const apiEndpoint = config.apiUrl + '/auths';
+const tokenKey = "token";
 
-// function movieUrl(id) {
-//     return `${apiEndpoint}/${id}`;
-// }
+http.setJwt(getJwt());
 
-// export function getMovies() {
-//     return http.get(apiEndpoint);
-// }
-
-// export function getMovie(id) {
-//     return http.get(movieUrl(id));
-//     // return http.get(apiEndpoint + '/' + id);
-// }
-
-export function login(email, password) {
-    // if (movie._id) {
-    //     const body = { ...movie };
-    //     delete body._id;
-    //     return http.put(movieUrl(movie._id), body);
-    // }
-    return http.post(apiEndpoint, {
+export async function login(email, password) {
+    const { data: jwt } = await http.post(apiEndpoint, {
         email,
         password
     });
+    // return http.post(apiEndpoint, {
+    //     email,
+    //     password
+    // });
+    localStorage.setItem(tokenKey, jwt);
 }
 
-// export function deleteMovie(id) {
-//     return http.delete(movieUrl(id));
-// }
+export function loginWithJwt(jwt) {
+    localStorage.setItem(tokenKey, jwt);
+}
 
+export function getCurrentUser() {
+    const jwt = localStorage.getItem('token');
+    return jwtDecode(jwt);
+}
+
+export function getJwt() {
+    return localStorage.getItem(tokenKey);
+}
+
+export function logout() {
+    localStorage.removeItem(tokenKey);
+}
+
+export default {
+    login,
+    loginWithJwt,
+    getCurrentUser,
+    getJwt,
+    logout
+}

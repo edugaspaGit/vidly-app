@@ -126,6 +126,8 @@ class Movies extends Component {
       sortColumn,
     } = this.state;
 
+    const { user } = this.props;
+
     const { totalCount, movies } = this.getPagedData();
 
     // if (totalCount === 0) return <p>No movies to show from the database</p>;// Commented because the page triggers an incorrect screen after
@@ -143,11 +145,13 @@ class Movies extends Component {
         </div>
         <div className="col">
           {/* <button className="btn btn-primary">New Movie</button> */}
-          <NavLink to={`/movies/new`}>
-            <button className="btn btn-primary" style={{ marginBottom: 20 }}>
-              New Movie
-            </button>
-          </NavLink>
+          {user && (
+            <NavLink to={`/movies/new`}>
+              <button className="btn btn-primary" style={{ marginBottom: 20 }}>
+                New Movie
+              </button>
+            </NavLink>
+          )}
           <p>Showing {totalCount} movies from the DB:</p>
           <SearchBox value={searchQuery} onChange={this.handleSearch} />
           <MoviesTable

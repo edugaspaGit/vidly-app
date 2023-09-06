@@ -1,6 +1,7 @@
 import React from "react";
 import Form from "./commons/form";
 import { register } from "../services/userService";
+import auth from "../services/authService";
 import Joi from "joi-browser";
 
 class RegisterForm extends Form {
@@ -34,8 +35,10 @@ class RegisterForm extends Form {
     // Call the server
     try {
       const response = await register(this.state.data);
-      localStorage.setItem("token", response.headers["x-auth-token"]);
-      return this.props.history.push("/movies");
+      auth.loginWithJwt(response.headers["x-auth-token"]);
+      // localStorage.setItem("token", response.headers["x-auth-token"]);
+      window.location = "/";
+      // return this.props.history.push("/movies");
     } catch (ex) {
       const errors = { ...this.state.errors };
       errors.username = ex.response.data;
