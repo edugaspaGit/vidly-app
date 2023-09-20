@@ -24,8 +24,15 @@ export function loginWithJwt(jwt) {
 }
 
 export function getCurrentUser() {
-    const jwt = localStorage.getItem('token');
-    return jwtDecode(jwt);
+    try {
+        const jwt = localStorage.getItem(tokenKey);
+        return jwtDecode(jwt);
+    } catch (ex) {
+        return null;
+    }
+    // const jwt = localStorage.getItem('token');
+    // console.log(jwt);
+    // return jwtDecode(jwt);
 }
 
 export function getJwt() {
