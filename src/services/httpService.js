@@ -3,6 +3,7 @@ import logger from "./logService";
 // import auth from "./authService";
 import { toast } from "react-toastify";
 
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 // axios.defaults.headers.common["x-auth-token"] = auth.getJwt();
 // axios.defaults.headers.common["x-auth-token"] = localStorage.getItem("token");
 
